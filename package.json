@@ -33,5 +33,9 @@
 		"vite-imagetools": "^4.0.0",
 		"vite-plugin-windicss": "^1.5.1",
 		"windicss": "^3.2.1"
+	},
+	"dependencies": {
+		"@xstate/svelte": "^0.2.0",
+		"xstate": "^4.26.0"
 	}
 }
