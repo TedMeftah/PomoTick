@@ -1,0 +1,37 @@
+{
+	"name": "pomotick",
+	"version": "0.0.1",
+	"repository": "https://github.com/tedmeftah/pomotick.git",
+	"author": "Mohamed Meftah (https://tedmeftah.com/)",
+	"license": "MIT",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"dev": "set NODE_ENV=development && svelte-kit dev",
+		"build": "set NODE_ENV=production && svelte-kit build",
+		"preview": "set NODE_ENV=production && svelte-kit preview",
+		"start": "svelte-kit start",
+		"lint": "prettier --ignore-path .gitignore --check . && eslint .",
+		"format": "prettier --ignore-path .gitignore --write ."
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-node": "next",
+		"@sveltejs/adapter-static": "next",
+		"@sveltejs/kit": "next",
+		"@typescript-eslint/eslint-plugin": "^5.3.1",
+		"@typescript-eslint/parser": "^5.3.1",
+		"eslint": "^8.2.0",
+		"eslint-config-prettier": "^8.3.0",
+		"eslint-plugin-svelte3": "^3.2.1",
+		"prettier": "~2.4.1",
+		"prettier-plugin-svelte": "^2.4.0",
+		"svelte": "^3.44.1",
+		"svelte-preprocess": "^4.9.8",
+		"tslib": "^2.3.1",
+		"typescript": "^4.4.4",
+		"vite": "^2.6.14",
+		"vite-imagetools": "^4.0.0",
+		"vite-plugin-windicss": "^1.5.1",
+		"windicss": "^3.2.1"
+	}
+}
