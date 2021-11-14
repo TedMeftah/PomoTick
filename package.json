@@ -10,7 +10,6 @@
 		"dev": "set NODE_ENV=development && svelte-kit dev",
 		"build": "set NODE_ENV=production && svelte-kit build",
 		"preview": "set NODE_ENV=production && svelte-kit preview",
-		"start": "svelte-kit start",
 		"lint": "prettier --ignore-path .gitignore --check . && eslint .",
 		"format": "prettier --ignore-path .gitignore --write ."
 	},
