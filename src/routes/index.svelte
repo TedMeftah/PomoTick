@@ -1,17 +1,28 @@
 <script lang="ts">
 	import { useMachine } from '@xstate/svelte'
-	import Timer from '@/states/timer'
+	import Pomodoro from '@/states/pomodoro'
+	import { matchesState } from 'xstate'
 
 	function format(num) {
 		return num.toString().padStart(2, '0')
 	}
 
-	let { state: timerState, send: timerSend } = useMachine(Timer)
+	let { state, send } = useMachine(Pomodoro)
 
-	$: time = $timerState.context.duration - $timerState.context.elapsed
+	$: time = $state.context.duration - $state.context.elapsed
 	$: seconds = Math.round(time % 60)
 	$: minutes = Math.round((time - seconds) / 60)
 	$: formated = `${format(minutes)}:${format(seconds)}`
+
+	$: current = $state.matches('paused')
+		? 'Paused'
+		: $state.matches('running.work')
+		? 'Work'
+		: $state.matches('running.break')
+		? 'Break'
+		: $state.matches('running.longBreak')
+		? 'Long Break'
+		: ''
 </script>
 
 <svelte:head>
@@ -25,19 +36,21 @@
 <div class="flex flex-col h-screen select-none justify-center items-center">
 	<span
 		class="rounded-full bg-cyan-300 text-lg tracking-wider py-1 px-4 text-cyan-900 uppercase block"
-		>Working</span
+		>{current}</span
 	>
 	<time class="font-bold text-10xl block tabular-nums" datetime="PT{minutes}M{seconds}S"
 		>{formated}</time
 	>
-	{#if $timerState.value === 'paused'}
-		<button on:click={() => timerSend('RESUME')}>Start</button>
+
+	{$state.context.cycles}
+	{#if $state.value === 'paused'}
+		<button on:click={() => send('RESUME')}>Start</button>
 	{/if}
-	{#if $timerState.value === 'running'}
-		<button on:click={() => timerSend('PAUSE')}>Stop</button>
+	{#if $state.matches('running')}
+		<button on:click={() => send('PAUSE')}>Stop</button>
 	{/if}
 
-	<button disabled={$timerState.value !== 'paused'} on:click={() => timerSend('RESET')}>
+	<button disabled={$state.value !== 'paused'} on:click={() => send('RESET')}>
 		Restart
 	</button>
 </div>
