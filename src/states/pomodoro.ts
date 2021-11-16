@@ -42,12 +42,12 @@ export default createMachine<Context, Event>({
 	initial: 'paused',
 	context: {
 		config: {
-			interval: 100,
+			interval: 1000,
 			cycles: 4,
 			duration: {
-				work: 1 * 60,
-				'break:short': 1 * 60,
-				'break:long': 1 * 60
+				work: 25 * 60,
+				'break:short': 5 * 60,
+				'break:long': 15 * 60
 			}
 		},
 		cycles: 0,
