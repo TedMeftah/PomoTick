@@ -1,14 +1,10 @@
 import TimeWorker from '@/workers/Timer?worker'
-import type {Payload} from '@/workers/Timer'
+import type TimerWoker from '@/workers/Timer'
 
 type Callback = () => void
 
-type TimeWorker = Omit<Worker, 'postMessage'> & {
-    postMessage: (message: Payload) => void
-}
-
 class BackgroundTimer {
-	#worker: TimeWorker
+	#worker: TimerWoker
 	#counter = 0
 	#callbacks = new Map<number, Callback>()
 
