@@ -1,4 +1,5 @@
 import { createMachine, assign } from 'xstate'
+import BackgroundTimer from '@/utilities/BackgroundTimer'
 
 interface Context {
 	elapsed: number
@@ -15,25 +16,13 @@ const isDone = ({ elapsed, duration }: Context) => elapsed >= duration
 const ticker =
 	({ interval }) =>
 	(callback) => {
-		let last = Date.now()
-		let timer: number
-
-		callback('TICK')
-		function tick() {
-			timer = requestAnimationFrame(tick)
-			const current = Date.now()
-			if (current - last >= interval) {
-				last = current
-				callback('TICK')
-			}
-		}
-		tick()
-
-		return () => cancelAnimationFrame(timer)
+		if (!BackgroundTimer) return
+		const timer = BackgroundTimer.setInterval(() => callback('TICK'), interval)
+		return () => BackgroundTimer.clearInterval(timer)
 	}
 
 export default createMachine<Context, Event>({
-	initial: 'paused',
+	initial: 'running',
 	context: {
 		elapsed: 0,
 		duration: 60 * 25,
