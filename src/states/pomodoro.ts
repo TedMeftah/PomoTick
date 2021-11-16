@@ -2,7 +2,7 @@ import { createMachine, assign } from 'xstate'
 import BackgroundTimer from '@/utilities/BackgroundTimer'
 
 interface Context {
-	config: {
+	settings: {
 		interval: number
 		cycles: number
 		duration: {
@@ -16,32 +16,61 @@ interface Context {
 	elapsed: number
 }
 
+type Event = Unpack<{
+	TICK: Record<string, never>,
+	PAUSE: Record<string, never>,
+	RESUME: Record<string, never>,
+	RESET: Record<string, never>,
+	'SETTINGS.UPDATE':  { settings: SettingsPayload },
+}>
 
-type Event = { type: 'TICK' } | { type: 'PAUSE' } | { type: 'RESUME' } | { type: 'RESET' }
+type SettingsPayload = Partial<{
+	cycles: number
+	"duration:work": number
+	'duration:break:short': number
+	'duration:break:long': number
+}>
+
+type SettingsEvent = Event & {type: 'SETTINGS.UPDATE'}
 
 const ticker =
-	({ config }) =>
+	({ settings }) =>
 	(callback) => {
 		if (!BackgroundTimer) return
-		const timer = BackgroundTimer.setInterval(() => callback('TICK'), config.interval)
+		const timer = BackgroundTimer.setInterval(() => callback('TICK'), settings.interval)
 		return () => BackgroundTimer.clearInterval(timer)
 	}
 
 const onTick = assign<Context>({ elapsed: ({ elapsed }) => elapsed + 1 })
 
 const isElapsed = ({ elapsed, duration }: Context) => elapsed >= duration
-const isCycle = ({ cycles, config }: Context) => cycles >= config.cycles
+const isCycle = ({ cycles, settings }: Context) => cycles >= settings.cycles
 
 const incCycles = assign<Context>({ cycles: ({ cycles }) => cycles + 1 })
 const resetCycles = assign<Context>({ cycles: 0 })
 const resetElapsed = assign<Context>({ elapsed: 0 })
-const resetDuration = (of: keyof Context['config']['duration']) =>
-	assign<Context>({ duration: ({ config }) => config.duration[of] })
+const resetDuration = (of: keyof Context['settings']['duration']) =>
+	assign<Context>({ duration: ({ settings }) => settings.duration[of] })
+
+const setSettings = assign<Context, SettingsEvent>(({ settings }, event) => {
+	if (event.type !== 'SETTINGS.UPDATE') return
+	return {
+		settings: {
+			interval: settings.interval,
+			cycles: event.settings.cycles || settings.cycles,
+			duration: {
+				work: event.settings['duration:work'] * 60  || settings.duration.work,
+				"break:long": event.settings['duration:break:long'] * 60  || settings.duration["break:long"],
+				"break:short": event.settings['duration:break:short']  * 60 || settings.duration["break:short"],
+			}
+		}
+	}
+})
 
 export default createMachine<Context, Event>({
 	initial: 'paused',
 	context: {
-		config: {
+		settings: {
 			interval: 1000,
 			cycles: 4,
 			duration: {
@@ -53,6 +82,10 @@ export default createMachine<Context, Event>({
 		cycles: 0,
 		duration: 0,
 		elapsed: 0
+	},
+
+	on: {
+		'SETTINGS.UPDATE': { actions: setSettings }
 	},
 
 	states: {
@@ -82,6 +115,10 @@ export default createMachine<Context, Event>({
 						cond: isElapsed,
 						target: 'break:short',
 						actions: [resetElapsed, incCycles]
+					},
+
+					on: {
+						'SETTINGS.UPDATE': { actions: [setSettings, resetDuration('work')] }
 					}
 				},
 
@@ -90,7 +127,10 @@ export default createMachine<Context, Event>({
 					always: [
 						{ target: 'break:long', cond: isCycle },
 						{ target: 'work', cond: isElapsed, actions: resetElapsed }
-					]
+					],
+					on: {
+						'SETTINGS.UPDATE': { actions: [setSettings, resetDuration('break:short')] }
+					}
 				},
 
 				'break:long': {
@@ -99,6 +139,9 @@ export default createMachine<Context, Event>({
 						cond: isElapsed,
 						target: 'work',
 						actions: [resetElapsed, resetCycles]
+					},
+					on: {
+						'SETTINGS.UPDATE': { actions: [setSettings, resetDuration('break:short')] }
 					}
 				}
 			}

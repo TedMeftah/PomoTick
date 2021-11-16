@@ -1,10 +1,6 @@
 /// <reference lib="WebWorker" />
 declare const self: WorkerGlobalScope
 
-type Unpack<T> = {
-	[K in keyof T]: T[K] & { type: K }
-}[keyof T]
-
 type Payload = Unpack<{
 	setInterval: {
 		id: number
