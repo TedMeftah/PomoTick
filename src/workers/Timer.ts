@@ -1,7 +1,13 @@
 /// <reference lib="WebWorker" />
 declare const self: WorkerGlobalScope
 
-type Payload = {
+
+
+type Type<T> = {
+	[K in keyof T]: T[K] & { type: K }
+}[keyof T]
+
+export type Payload = Type<{
 	setInterval: {
 		id: number
 		delay: number
@@ -16,13 +22,9 @@ type Payload = {
 	clearTimeout: {
 		id: number
 	}
-}
+}>
 
-type Type<T> = {
-	[K in keyof T]: T[K] & { type: K }
-}[keyof T]
-
-self.addEventListener('message', function ({ data }: MessageEvent<Type<Payload>>) {
+self.addEventListener('message', function ({ data }: MessageEvent<Payload>) {
 	switch (data.type) {
 		case 'setInterval':
 			setInterval(function () {
