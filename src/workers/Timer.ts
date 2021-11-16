@@ -22,8 +22,6 @@ type Payload = Unpack<{
 	}
 }>
 
-
-
 self.addEventListener('message', function ({ data }: MessageEvent<Payload>) {
 	switch (data.type) {
 		case 'setInterval':
@@ -46,7 +44,7 @@ self.addEventListener('message', function ({ data }: MessageEvent<Payload>) {
 })
 
 type Type = Omit<Worker, 'postMessage'> & {
-    postMessage: (message: Payload) => void
+	postMessage: (message: Payload) => void
 }
 
 export default Type

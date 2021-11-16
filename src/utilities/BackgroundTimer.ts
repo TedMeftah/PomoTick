@@ -54,4 +54,4 @@ class BackgroundTimer {
 	}
 }
 
-export default typeof window === 'undefined' ? undefined : new BackgroundTimer()
+export default typeof Worker === 'undefined' ? undefined : new BackgroundTimer()
