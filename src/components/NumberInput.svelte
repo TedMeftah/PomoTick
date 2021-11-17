@@ -85,9 +85,8 @@
 	}
 
 	input:focus {
-		@apply border-indigo-500 ring-indigo-500 z-10 relative;
+		@apply border-indigo-500 rounded-[4px] ring-indigo-500 z-10 relative;
 	}
-
 	@screen sm {
 		input {
 			@apply text-sm;
