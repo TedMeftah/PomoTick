@@ -49,17 +49,16 @@
 		send('PAUSE')
 		showSettings = true
 	}
+
 </script>
 
 <svelte:head>
 	<title>Timer</title>
 </svelte:head>
-
-{#if false}
-	<header>
-		<button on:click={openSettings}>Settings</button>
+	<header class="z-100 fixed">
+		<button on:click={() => showSettings = !showSettings}>Settings</button>
 	</header>
-	<Settings>
+	<Settings open={showSettings}>
 		<form on:submit|preventDefault={updateSettings}>
 			<header class="px-4 pt-5 sm:px-6">
 				<h3 class="font-medium text-lg text-gray-900 leading-6" id="modal-title">
@@ -110,7 +109,6 @@
 			</footer>
 		</form>
 	</Settings>
-{/if}
 <div class="flex flex-col h-screen select-none justify-center items-center">
 	<span
 		class="rounded-full bg-cyan-300 text-lg tracking-wider py-1 px-4 text-cyan-900 uppercase block"

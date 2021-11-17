@@ -2,36 +2,22 @@
 	export let open = false
 </script>
 
-<div class="dialog" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-	<div class="content">
-		<!--
-        Background overlay, show/hide based on modal state.
-  
-        Entering: "ease-out duration-300"
-          From: "opacity-0"
-          To: "opacity-100"
-        Leaving: "ease-in duration-200"
-          From: "opacity-100"
-          To: "opacity-0"
-      -->
-		<div class="overlay" aria-hidden="true" />
-		<!--
-        Modal panel, show/hide based on modal state.
-  
-        Entering: "ease-out duration-300"
-          From: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-          To: "opacity-100 translate-y-0 sm:scale-100"
-        Leaving: "ease-in duration-200"
-          From: "opacity-100 translate-y-0 sm:scale-100"
-          To: "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-      -->
-		<div
-			class="bg-white rounded-lg shadow-xl text-left transform transition-all inline-block align-bottom overflow-hidden sm:max-w-lg sm:my-8 sm:w-full sm:align-middle"
-		>
-            <slot></slot>
+{#if open}
+	<div
+		class="dialog"
+		class:is-open={open}
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="modal-title"
+	>
+		<div class="content">
+			<div class="overlay" aria-hidden="true" />
+			<div class="panel">
+				<slot />
+			</div>
 		</div>
 	</div>
-</div>
+{/if}
 
 <style>
 	.dialog {
@@ -43,6 +29,24 @@
 
 	.dialog .overlay {
 		@apply bg-gray-500 bg-opacity-75 inset-0 transition-opacity fixed;
+		@apply opacity-0;
+		@apply ease-out duration-300;
+	}
+
+	.dialog.is-open .overlay {
+		@apply opacity-100;
+		@apply ease-in duration-200;
+	}
+
+	.dialog .panel {
+		@apply bg-white rounded-lg shadow-xl text-left transform transition-all inline-block align-bottom overflow-hidden;
+		@apply opacity-0 ease-in translate-y-4 duration-200;
+		@apply ease-in duration-200;
+	}
+
+	.dialog.is-open .panel {
+		@apply opacity-100 translate-y-0;
+		@apply ease-out duration-300;
 	}
 
 	@screen sm {
@@ -50,7 +54,15 @@
 			@apply p-0 block;
 		}
 		.dialog .content::before {
-            @apply h-screen content-[''] inline-block align-middle;
+			@apply h-screen content-[''] inline-block align-middle;
+		}
+
+		.dialog .panel {
+			@apply max-w-lg my-8 w-full align-middle;
+			@apply scale-95 translate-y-0;
+		}
+		.dialog.is-open .panel {
+			@apply scale-100;
 		}
 	}
 </style>

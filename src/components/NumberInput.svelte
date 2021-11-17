@@ -8,6 +8,12 @@
 	export let id = name
 	export let placeholder = min.toString()
 
+	let input
+    
+	function refocus() {
+		input.focus()
+	}
+
 	function decrement() {
 		value = Math.max(min, value - step)
 	}
@@ -19,14 +25,23 @@
 
 <label for={id}>{label}</label>
 <div class="rounded-md flex shadow-sm mt-1">
-	<button type="button" on:click={decrement}>
+	<button type="button" tabindex="-1" on:focus={refocus} on:click={decrement}>
 		<svg viewBox="0 0 24 24" role="img" aria-labelledby="{id}-dec">
 			<title id="{id}-dec">Decrement</title>
 			<path d="M20 12H4" />
 		</svg>
 	</button>
-	<input type="number" bind:value {id} {name} {step} {min} {placeholder} />
-	<button type="button" on:click={increment}>
+	<input
+		type="number"
+		bind:this={input}
+		bind:value
+		{id}
+		{name}
+		{step}
+		{min}
+		{placeholder}
+	/>
+	<button type="button" tabindex="-1" on:focus={refocus} on:click={increment}>
 		<svg viewBox="0 0 24 24" role="img" aria-labelledby="{id}-inc">
 			<title id="{id}-dec">Increment</title>
 			<path d="M12 4v16m8-8H4" />
