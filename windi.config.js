@@ -16,7 +16,5 @@ export default {
 	variants: {
 		extend: {}
 	},
-	plugins: [
-		require('windicss/plugin/forms'),
-	]
+	plugins: [require('windicss/plugin/forms')]
 }

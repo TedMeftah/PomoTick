@@ -17,21 +17,21 @@ interface Context {
 }
 
 type Event = Unpack<{
-	TICK: Record<string, never>,
-	PAUSE: Record<string, never>,
-	RESUME: Record<string, never>,
-	RESET: Record<string, never>,
-	'SETTINGS.UPDATE':  { settings: SettingsPayload },
+	TICK: Record<string, never>
+	PAUSE: Record<string, never>
+	RESUME: Record<string, never>
+	RESET: Record<string, never>
+	'SETTINGS.UPDATE': { settings: SettingsPayload }
 }>
 
 type SettingsPayload = Partial<{
 	cycles: number
-	"duration:work": number
+	'duration:work': number
 	'duration:break:short': number
 	'duration:break:long': number
 }>
 
-type SettingsEvent = Event & {type: 'SETTINGS.UPDATE'}
+type SettingsEvent = Event & { type: 'SETTINGS.UPDATE' }
 
 const ticker =
 	({ settings }) =>
@@ -59,9 +59,11 @@ const setSettings = assign<Context, SettingsEvent>(({ settings }, event) => {
 			interval: settings.interval,
 			cycles: event.settings.cycles || settings.cycles,
 			duration: {
-				work: event.settings['duration:work'] * 60  || settings.duration.work,
-				"break:long": event.settings['duration:break:long'] * 60  || settings.duration["break:long"],
-				"break:short": event.settings['duration:break:short']  * 60 || settings.duration["break:short"],
+				work: event.settings['duration:work'] * 60 || settings.duration.work,
+				'break:long':
+					event.settings['duration:break:long'] * 60 || settings.duration['break:long'],
+				'break:short':
+					event.settings['duration:break:short'] * 60 || settings.duration['break:short']
 			}
 		}
 	}

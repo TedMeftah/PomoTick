@@ -9,7 +9,7 @@
 	export let placeholder = min.toString()
 
 	let input
-    
+
 	function refocus() {
 		input.focus()
 	}
@@ -81,12 +81,17 @@
 		@apply stroke-cap-round stroke-join-round stroke-width-2;
 	}
 	input {
-		@apply rounded-none border-gray-300 text-center w-full block;
+		@apply rounded-none border-gray-300 text-center w-full text-gray-900 block;
 	}
 
 	input:focus {
 		@apply border-indigo-500 rounded-[4px] ring-indigo-500 z-10 relative;
 	}
+
+	label:not(:first-child) {
+		@apply mt-6;
+	}
+
 	@screen sm {
 		input {
 			@apply text-sm;
