@@ -80,6 +80,7 @@
 <svelte:head>
 	<title>Timer</title>
 </svelte:head>
+
 <header class="z-100 fixed">
 	<button type="button" on:click={() => (showSettings = !showSettings)}>
 		<svg class="h-6 w-6" fill="none" stroke="currentColor">
@@ -93,7 +94,8 @@
 		</svg>
 	</button>
 </header>
-<Modal open={showSettings}>
+
+<Modal open={showSettings} on:close={() => (showSettings = false)}>
 	<SettingsFrom
 		values={settingValues}
 		on:reset={resetSettings}

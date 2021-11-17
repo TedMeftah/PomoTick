@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { TransitionConfig } from 'svelte/types/runtime/transition'
+	import { createEventDispatcher } from 'svelte'
+	import { wait } from '@/utilities/Transitions'
 
 	export let open = false
 
-	function wait(node: Element, duration = 200): TransitionConfig {
-		return {
-			duration,
-			tick: (t) => node.toggleAttribute('hidden', t !== 1)
-		}
+	const dispatch = createEventDispatcher()
+
+	function onClose() {
+		dispatch('close')
 	}
 </script>
 
@@ -21,7 +21,7 @@
 		aria-labelledby="modal-title"
 	>
 		<div class="content">
-			<div class="overlay" aria-hidden="true" />
+			<div class="overlay" aria-hidden="true" on:click={onClose} />
 			<div class="panel">
 				<slot />
 			</div>
@@ -76,7 +76,7 @@
 			@apply max-w-lg my-8 w-full align-middle;
 			@apply scale-100;
 		}
-		[role='dialog'] .panel[hidden] {
+		[role='dialog'][hidden] .panel {
 			@apply scale-95 translate-y-0;
 		}
 	}

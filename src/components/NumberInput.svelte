@@ -54,7 +54,7 @@
 		@apply font-medium text-sm text-gray-700 block;
 	}
 	button {
-		@apply border font-medium  space-x-2 bg-gray-50 border-gray-300 text-sm py-2 px-4 text-gray-700 relative inline-flex items-center;
+		@apply border font-medium space-x-2 bg-gray-50 border-gray-300 text-sm py-2 px-4 text-gray-700 relative inline-flex items-center;
 	}
 
 	button:first-child {
