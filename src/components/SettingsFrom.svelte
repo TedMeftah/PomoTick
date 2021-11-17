@@ -1,19 +1,77 @@
 <script lang="ts">
+	import type { Context } from '@/states/pomodoro'
+
 	import { createEventDispatcher } from 'svelte'
+	import Modal from '@/components/Modal.svelte'
 	import NumberInput from '@/components/NumberInput.svelte'
 
-	type Value = {
+	type Field = {
 		label: string
 		name: string
 		value: number
 	}
 
-	export let values: Value[]
+	const defaults = {
+		cycles: 4,
+		'duration:work': 25,
+		'duration:break:short': 5,
+		'duration:break:long': 10
+	}
 
-	const dispatch = createEventDispatcher()
+	export let context: () => Context['settings']
+
+	export let show = false
+
+	export let send
+
+	let fields: Field[] = [
+		{
+			label: 'Work Duration',
+			name: 'duration:work',
+			value: 0
+		},
+
+		{
+			label: 'Short Break Duration',
+			name: 'duration:break:short',
+			value: 0
+		},
+
+		{
+			label: 'Long Break Duration',
+			name: 'duration:break:long',
+			value: 0
+		},
+
+		{
+			label: 'Long Break After',
+			name: 'cycles',
+			value: 0
+		}
+	]
+
+	function syncFields() {
+		const { cycles, duration } = context()
+		setValues({
+			cycles,
+			'duration:work': duration.work / 60,
+			'duration:break:short': duration['break:short'] / 60,
+			'duration:break:long': duration['break:long'] / 60
+		})
+	}
+
+	syncFields()
+
+	function setValues(values) {
+		fields = fields.map((field) => {
+			console.log(field.name, values[field.name])
+			field.value = values[field.name] ?? field.value
+			return field
+		})
+	}
 
 	function onReset() {
-		dispatch('reset')
+		setValues(defaults)
 	}
 
 	function onSubmit(e) {
@@ -25,24 +83,29 @@
 				settings[key] = numberValue
 			}
 		}
-		dispatch('update', settings)
+
+		send('SETTINGS.UPDATE', { settings })
+		syncFields()
+        show = false
 	}
 </script>
 
-<form on:reset|preventDefault={onReset} on:submit|preventDefault={onSubmit}>
-	<h3 id="modal-title">Settings</h3>
+<Modal open={show} on:close={() => (show = false)}>
+	<form on:reset|preventDefault={onReset} on:submit|preventDefault={onSubmit}>
+		<h3 id="modal-title">Settings</h3>
 
-	<fieldset>
-		{#each values as { value, name, label }}
-			<NumberInput {label} {name} {value} />
-		{/each}
-	</fieldset>
+		<fieldset>
+			{#each fields as { value, name, label }}
+				<NumberInput {label} {name} {value} />
+			{/each}
+		</fieldset>
 
-	<footer>
-		<button type="submit">Save</button>
-		<button type="reset">Default</button>
-	</footer>
-</form>
+		<footer>
+			<button type="submit">Save</button>
+			<button type="reset">Default</button>
+		</footer>
+	</form>
+</Modal>
 
 <style>
 	h3 {

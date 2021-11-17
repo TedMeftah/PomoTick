@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { useMachine } from '@xstate/svelte'
 	import Pomodoro from '@/states/pomodoro'
-	import Modal from '@/components/Modal.svelte'
 	import SettingsFrom from '@/components/SettingsFrom.svelte'
 
 	function format(num) {
@@ -26,55 +25,6 @@
 		: ''
 
 	let showSettings = false
-
-	let settingValues = getSettingValues()
-
-	function getSettingValues() {
-		return [
-			{
-				label: 'Work Duration',
-				name: 'duration:work',
-				value: $state.context.settings.duration['work'] / 60
-			},
-
-			{
-				label: 'Short Break Duration',
-				name: 'duration:break:short',
-				value: $state.context.settings.duration['break:short'] / 60
-			},
-
-			{
-				label: 'Long Break Duration',
-				name: 'duration:break:long',
-				value: $state.context.settings.duration['break:long'] / 60
-			},
-
-			{
-				label: 'Long Break After',
-				name: 'cycles',
-				value: $state.context.settings.cycles
-			}
-		]
-	}
-
-	function updateSettings(e) {
-		send('SETTINGS.UPDATE', { settings: e.detail })
-		settingValues = getSettingValues()
-		showSettings = false
-	}
-
-	function resetSettings() {
-		send('SETTINGS.UPDATE', {
-			settings: {
-				cycles: 4,
-				'duration:work': 25,
-				'duration:break:short': 5,
-				'duration:break:long': 10
-			}
-		})
-		settingValues = getSettingValues()
-		showSettings = false
-	}
 </script>
 
 <svelte:head>
@@ -95,13 +45,12 @@
 	</button>
 </header>
 
-<Modal open={showSettings} on:close={() => (showSettings = false)}>
-	<SettingsFrom
-		values={settingValues}
-		on:reset={resetSettings}
-		on:update={updateSettings}
-	/>
-</Modal>
+<SettingsFrom
+	{send}
+	bind:show={showSettings}
+	context={() => $state.context.settings}
+/>
+
 <div class="flex flex-col h-screen select-none justify-center items-center">
 	<span
 		class="rounded-full bg-cyan-300 text-lg tracking-wider py-1 px-4 text-cyan-900 uppercase block"

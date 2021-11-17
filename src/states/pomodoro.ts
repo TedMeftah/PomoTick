@@ -1,7 +1,7 @@
 import { createMachine, assign } from 'xstate'
 import BackgroundTimer from '@/utilities/BackgroundTimer'
 
-interface Context {
+export interface Context {
 	settings: {
 		interval: number
 		cycles: number
@@ -16,7 +16,7 @@ interface Context {
 	elapsed: number
 }
 
-type Event = Unpack<{
+export type Event = Unpack<{
 	TICK: Record<string, never>
 	PAUSE: Record<string, never>
 	RESUME: Record<string, never>
