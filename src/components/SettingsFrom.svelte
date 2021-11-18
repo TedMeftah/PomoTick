@@ -1,7 +1,5 @@
 <script lang="ts">
 	import type { Context } from '@/states/pomodoro'
-
-	import { createEventDispatcher } from 'svelte'
 	import Modal from '@/components/Modal.svelte'
 	import NumberInput from '@/components/NumberInput.svelte'
 

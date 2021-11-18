@@ -14,16 +14,16 @@
 	$: minutes = Math.round((time - seconds) / 60)
 	$: formated = `${format(minutes)}:${format(seconds)}`
 
-	$: current = $state.matches('paused')
+	$: label = $state.matches('paused')
 		? 'Paused'
 		: $state.matches('running.work')
-		? 'Work'
+		? `Work ${$state.context.cycles}/${$state.context.settings.cycles}`
 		: $state.matches('running.break:short')
 		? 'Break'
 		: $state.matches('running.break:long')
 		? 'Long Break'
 		: ''
-
+		
 	let showSettings = false
 </script>
 
@@ -45,27 +45,32 @@
 	</button>
 </header>
 
-<SettingsFrom
-	{send}
-	bind:show={showSettings}
-	context={() => $state.context.settings}
-/>
+<SettingsFrom {send} bind:show={showSettings} context={() => $state.context.settings} />
 
 <div class="flex flex-col h-screen select-none justify-center items-center">
 	<span
 		class="rounded-full bg-cyan-300 text-lg tracking-wider py-1 px-4 text-cyan-900 uppercase block"
 	>
-		{current}
+		{label}
 	</span>
-	<time class="font-bold text-10xl block tabular-nums" datetime="PT{minutes}M{seconds}S">
-		{formated}
-	</time>
-
-	{$state.context.cycles}/{$state.context.settings.cycles}
+	
+	<!-- <time class=" block " datetime="PT{minutes}M{seconds}S"></time> -->
+	<svg class="my-8 mx-8 w-full max-w-[40rem]" viewBox="0 0 100 25">
+		<text
+			class="font-bold fill-white text-sm tabular-nums"
+			transform="scale(1, 2.3)"
+			textLength="100"
+			lengthAdjust="spacingAndGlyphs"
+			y="10.3"
+		>
+			{formated}
+		</text>
+	</svg>
 
 	{#if $state.value === 'paused'}
 		<button on:click={() => send('RESUME')}>Start</button>
 	{/if}
+	
 	{#if $state.matches('running')}
 		<button on:click={() => send('PAUSE')}>Stop</button>
 	{/if}
